@@ -24,21 +24,28 @@ void Game::run() { while (mWindow.isOpen()) { processEvents(); update(); render(
 void Game::processEvents() {
     sf::Event event;
     while (mWindow.pollEvent(event)) {
-        if (event.type == sf::Event::Closed)
-            mWindow.close();
+        if (event.type == sf::Event::Closed) 
+            mWindow.close();  
     }
-    float currentSpeed = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ? mSprintSpeed : mWalkSpeed;
+    bool isSprinting = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && mJumpStamina > 0;
+    float currentSpeed = isSprinting ? mSprintSpeed : mWalkSpeed;
+    
+    if (isSprinting) {
+        mJumpStamina -= mStaminaConsumptionRate * 0.001f; // consume stamina while sprinting
+        if (mJumpStamina < 0) mJumpStamina = 0; // prevent stamina from going negative
+    }
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
         mVelocity.x = -currentSpeed; // adjust this value to control the left movement speed
     } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
         mVelocity.x = currentSpeed; // adjust this value to control the right movement speed
     } else {
-        mVelocity.x = 0.f;
+        mVelocity.x = 0.f; // stop moving
     }
     if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) && !mIsJumping && mJumpStamina >= mStaminaConsumptionRate) {
-        mVelocity.y = mJumpSpeed;
-        mIsJumping = true;
-        mJumpStamina -= mStaminaConsumptionRate;
+        mVelocity.y = mJumpSpeed; 
+        mIsJumping = true; 
+        mJumpStamina -= mStaminaConsumptionRate; // consume stamina when jumping
     }
 }
 
@@ -47,13 +54,13 @@ void Game::update() {
     mShape.move(mVelocity);
     // prevent the ball from falling through the bottom of the window
     if (mShape.getPosition().y + mShape.getRadius() * 2 > mWindow.getSize().y) {
-        mShape.setPosition(mShape.getPosition().x, mWindow.getSize().y - mShape.getRadius() * 2);
-        mVelocity.y = 0;
-        mIsJumping = false;
+        mShape.setPosition(mShape.getPosition().x, mWindow.getSize().y - mShape.getRadius() * 2); 
+        mVelocity.y = 0; 
+        mIsJumping = false; 
     }
     // recover jump stamina over time
     if (mJumpStamina < 100.f) {
-        mJumpStamina += mStaminaRecoveryRate;
+        mJumpStamina += mStaminaRecoveryRate; 
     }
 
     // update stamina bar size
