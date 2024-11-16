@@ -15,6 +15,11 @@ void Game::processEvents() {
         if (event.type == sf::Event::Closed)
             mWindow.close();
     }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+        mVelocity.x = -0.1f; // adjust this value to control the left movement speed
+    } else {
+        mVelocity.x = 0.f;
+    }
 }
 
 void Game::update() {
