@@ -10,6 +10,8 @@ Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style
     mJumpStamina = 100.f; // initial jump stamina
     mStaminaRecoveryRate = 0.01f; // rate at which stamina recovers
     mStaminaConsumptionRate = 20.f; // stamina consumed per jump
+    mWalkSpeed = 0.05f; // walking speed
+    mSprintSpeed = 0.1f; // sprinting speed
 
     // stamina bar
     mStaminaBar.setSize(sf::Vector2f(200.f, 15.f)); // 3/4 of the original height (20.f)
@@ -25,10 +27,11 @@ void Game::processEvents() {
         if (event.type == sf::Event::Closed)
             mWindow.close();
     }
+    float currentSpeed = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ? mSprintSpeed : mWalkSpeed;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-        mVelocity.x = -0.05f; // adjust this value to control the left movement speed
+        mVelocity.x = -currentSpeed; // adjust this value to control the left movement speed
     } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-        mVelocity.x = 0.05f; // adjust this value to control the right movement speed
+        mVelocity.x = currentSpeed; // adjust this value to control the right movement speed
     } else {
         mVelocity.x = 0.f;
     }
