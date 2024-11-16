@@ -4,7 +4,7 @@ Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style
     mShape.setFillColor(sf::Color::Green);
     mShape.setPosition(mWindow.getSize().x / 2.f, 0.f);
     mVelocity = sf::Vector2f(0.f, 0.f);
-    mGravity = 0.1f; // adjust this value to control the falling speed
+    mGravity = 0.001f; // adjust this value to control the falling speed
 }
 
 void Game::run() { while (mWindow.isOpen()) { processEvents(); update(); render(); } }
