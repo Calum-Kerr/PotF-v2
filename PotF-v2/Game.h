@@ -21,6 +21,7 @@ private:
 	float mJumpStamina;
 	float mStaminaRecoveryRate;
 	float mStaminaConsumptionRate;
+	sf::RectangleShape mStaminaBar;
 };
 
 #endif // GAME_H

@@ -10,6 +10,11 @@ Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style
     mJumpStamina = 100.f; // initial jump stamina
     mStaminaRecoveryRate = 0.01f; // rate at which stamina recovers
     mStaminaConsumptionRate = 20.f; // stamina consumed per jump
+
+    // stamina bar
+    mStaminaBar.setSize(sf::Vector2f(200.f, 20.f));
+    mStaminaBar.setFillColor(sf::Color::Red);
+    mStaminaBar.setPosition(10.f, 10.f);
 }
 
 void Game::run() { while (mWindow.isOpen()) { processEvents(); update(); render(); } }
@@ -47,10 +52,14 @@ void Game::update() {
     if (mJumpStamina < 100.f) {
         mJumpStamina += mStaminaRecoveryRate;
     }
+
+    // update stamina bar size
+    mStaminaBar.setSize(sf::Vector2f(200.f * (mJumpStamina / 100.f), 20.f));
 }
 
 void Game::render() {
     mWindow.clear();
     mWindow.draw(mShape);
+    mWindow.draw(mStaminaBar);
     mWindow.display();
 }
