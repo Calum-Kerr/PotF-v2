@@ -138,6 +138,7 @@
     <ClInclude Include="Game.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Player Sword Idle 48x48.png" />
     <Image Include="player_jump_left_48x48-sheet_1.png" />
     <Image Include="Player_Roll_48x48.png" />
     <Image Include="Player_Sword_Run_48x48_1.png" />

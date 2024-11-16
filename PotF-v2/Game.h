@@ -24,6 +24,10 @@ private:
 	sf::RectangleShape mStaminaBar;
 	float mWalkSpeed;
 	float mSprintSpeed;
+	sf::Texture mTextureIdle;
+	sf::Texture mTextureRun;
+	sf::Texture mTextureJump;
+	sf::Sprite mSprite;
 };
 
 #endif // GAME_H

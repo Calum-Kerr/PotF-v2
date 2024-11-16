@@ -40,5 +40,8 @@
     <Image Include="Player_Roll_48x48.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Player Sword Idle 48x48.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
