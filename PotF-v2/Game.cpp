@@ -25,6 +25,12 @@ Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style
     mStaminaBar.setSize(sf::Vector2f(200.f, 15.f)); // 3/4 of the original height (20.f)
     mStaminaBar.setFillColor(sf::Color::Red);
     mStaminaBar.setPosition(10.f, 10.f);
+
+    // initialize animation frames
+    mCurrentFrame = 0;
+    mFrameTime = 0.1f; // time per frame
+    mElapsedTime = 0.f;
+    mClock.restart(); // initialize the clock
 }
 
 void Game::run() { while (mWindow.isOpen()) { processEvents(); update(); render(); } }
@@ -47,18 +53,24 @@ void Game::processEvents() {
         currentSpeed = mWalkSpeed; // force player to walk when stamina is zero
     }
 
+    bool isMoving = false;
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
         mVelocity.x = -currentSpeed; // adjust this value to control the left movement speed
         mSprite.setTexture(mTextureRun);
+        isMoving = true;
     } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
         mVelocity.x = currentSpeed; // adjust this value to control the right movement speed
         mSprite.setTexture(mTextureRun);
+        isMoving = true;
     } else {
         mVelocity.x = 0.f; // stop moving
-        if (!mIsJumping) {
-            mSprite.setTexture(mTextureIdle);
-        }
     }
+
+    if (!isMoving && !mIsJumping) {
+        mSprite.setTexture(mTextureIdle);
+    }
+
     if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) && !mIsJumping && mJumpStamina >= mStaminaConsumptionRate) {
         mVelocity.y = mJumpSpeed; 
         mIsJumping = true; 
@@ -72,10 +84,12 @@ void Game::update() {
     mSprite.move(mVelocity);
     // prevent the ball from falling through the bottom of the window
     if (mSprite.getPosition().y + mSprite.getGlobalBounds().height > mWindow.getSize().y) {
-        mSprite.setPosition(mSprite.getPosition().x, mWindow.getSize().y - mSprite.getGlobalBounds().height); 
-        mVelocity.y = 0; 
-        mIsJumping = false; 
-        mSprite.setTexture(mTextureIdle);
+        mSprite.setPosition(mSprite.getPosition().x, mWindow.getSize().y - mSprite.getGlobalBounds().height);
+        mVelocity.y = 0;
+        mIsJumping = false;
+        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            mSprite.setTexture(mTextureIdle);
+        }
     }
     // recover jump stamina over time
     if (mJumpStamina < 100.f) {
@@ -84,6 +98,21 @@ void Game::update() {
 
     // update stamina bar size
     mStaminaBar.setSize(sf::Vector2f(200.f * (mJumpStamina / 100.f), 15.f)); // 3/4 of the original height (20.f)
+
+    // update animation frame
+    mElapsedTime += mClock.restart().asSeconds();
+    if (mElapsedTime >= mFrameTime) {
+        mElapsedTime = 0.f;
+        mCurrentFrame++;
+        if (mSprite.getTexture() == &mTextureIdle) {
+            mCurrentFrame %= 10; // 10 frames for idle
+        } else if (mSprite.getTexture() == &mTextureRun) {
+            mCurrentFrame %= 8; // 9 frames for run
+        } else if (mSprite.getTexture() == &mTextureJump) {
+            mCurrentFrame %= 6; // 6 frames for jump
+        }
+        mSprite.setTextureRect(sf::IntRect(mCurrentFrame * 48, 0, 48, 48));
+    }
 }
 
 void Game::render() {
