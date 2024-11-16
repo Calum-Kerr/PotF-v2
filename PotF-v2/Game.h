@@ -14,6 +14,8 @@ private:
     void render();
     sf::RenderWindow mWindow;
     sf::CircleShape mShape;
+    sf::Vector2f mVelocity;
+    float mGravity;
 };
 
 #endif // GAME_H

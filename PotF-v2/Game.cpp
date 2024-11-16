@@ -1,7 +1,11 @@
 #include "Game.h"
 
-Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen), mShape(24.f)
-{mShape.setFillColor(sf::Color::Green);}
+Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen), mShape(24.f) {
+    mShape.setFillColor(sf::Color::Green);
+    mShape.setPosition(mWindow.getSize().x / 2.f, 0.f);
+    mVelocity = sf::Vector2f(0.f, 0.f);
+    mGravity = 0.1f; // adjust this value to control the falling speed
+}
 
 void Game::run() { while (mWindow.isOpen()) { processEvents(); update(); render(); } }
 
@@ -14,7 +18,13 @@ void Game::processEvents() {
 }
 
 void Game::update() {
-    // Update logic here
+    mVelocity.y += mGravity;
+    mShape.move(mVelocity);
+    // prevent the ball from falling through the bottom of the window
+    if (mShape.getPosition().y + mShape.getRadius() * 2 > mWindow.getSize().y) {
+        mShape.setPosition(mShape.getPosition().x, mWindow.getSize().y - mShape.getRadius() * 2);
+        mVelocity.y = 0;
+    }
 }
 
 void Game::render() {
