@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen), mShape(100.f)
+Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen), mShape(24.f)
 {mShape.setFillColor(sf::Color::Green);}
 
 void Game::run() { while (mWindow.isOpen()) { processEvents(); update(); render(); } }
