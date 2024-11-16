@@ -24,7 +24,7 @@ void Game::processEvents() {
     } else {
         mVelocity.x = 0.f;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !mIsJumping) {
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) && !mIsJumping) {
         mVelocity.y = mJumpSpeed;
         mIsJumping = true;
     }
