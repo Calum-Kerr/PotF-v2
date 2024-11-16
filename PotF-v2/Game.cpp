@@ -5,6 +5,8 @@ Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style
     mShape.setPosition(mWindow.getSize().x / 2.f, 0.f);
     mVelocity = sf::Vector2f(0.f, 0.f);
     mGravity = 0.001f; // adjust this value to control the falling speed
+    mJumpSpeed = -0.3f; // adjust this value to control the jump speed
+    mIsJumping = false;
 }
 
 void Game::run() { while (mWindow.isOpen()) { processEvents(); update(); render(); } }
@@ -22,6 +24,10 @@ void Game::processEvents() {
     } else {
         mVelocity.x = 0.f;
     }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !mIsJumping) {
+        mVelocity.y = mJumpSpeed;
+        mIsJumping = true;
+    }
 }
 
 void Game::update() {
@@ -31,6 +37,7 @@ void Game::update() {
     if (mShape.getPosition().y + mShape.getRadius() * 2 > mWindow.getSize().y) {
         mShape.setPosition(mShape.getPosition().x, mWindow.getSize().y - mShape.getRadius() * 2);
         mVelocity.y = 0;
+        mIsJumping = false;
     }
 }
 

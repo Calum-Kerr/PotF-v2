@@ -15,7 +15,9 @@ private:
     sf::RenderWindow mWindow;
     sf::CircleShape mShape;
     sf::Vector2f mVelocity;
-    float mGravity;
+	float mGravity;
+	float mJumpSpeed;
+	bool mIsJumping;
 };
 
 #endif // GAME_H
