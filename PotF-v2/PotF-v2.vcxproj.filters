@@ -27,4 +27,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="player_jump_left_48x48-sheet_1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Player_Sword_Run_48x48_1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Player_Sword_Stab_96x48.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Player_Roll_48x48.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
