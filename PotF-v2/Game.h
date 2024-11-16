@@ -18,6 +18,9 @@ private:
 	float mGravity;
 	float mJumpSpeed;
 	bool mIsJumping;
+	float mJumpStamina;
+	float mStaminaRecoveryRate;
+	float mStaminaConsumptionRate;
 };
 
 #endif // GAME_H

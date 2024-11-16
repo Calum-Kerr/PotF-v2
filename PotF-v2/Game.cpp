@@ -7,6 +7,9 @@ Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style
     mGravity = 0.001f; // adjust this value to control the falling speed
     mJumpSpeed = -0.3f; // adjust this value to control the jump speed
     mIsJumping = false;
+    mJumpStamina = 100.f; // initial jump stamina
+    mStaminaRecoveryRate = 0.01f; // rate at which stamina recovers
+    mStaminaConsumptionRate = 20.f; // stamina consumed per jump
 }
 
 void Game::run() { while (mWindow.isOpen()) { processEvents(); update(); render(); } }
@@ -24,9 +27,10 @@ void Game::processEvents() {
     } else {
         mVelocity.x = 0.f;
     }
-    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) && !mIsJumping) {
+    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) && !mIsJumping && mJumpStamina >= mStaminaConsumptionRate) {
         mVelocity.y = mJumpSpeed;
         mIsJumping = true;
+        mJumpStamina -= mStaminaConsumptionRate;
     }
 }
 
@@ -38,6 +42,10 @@ void Game::update() {
         mShape.setPosition(mShape.getPosition().x, mWindow.getSize().y - mShape.getRadius() * 2);
         mVelocity.y = 0;
         mIsJumping = false;
+    }
+    // recover jump stamina over time
+    if (mJumpStamina < 100.f) {
+        mJumpStamina += mStaminaRecoveryRate;
     }
 }
 
