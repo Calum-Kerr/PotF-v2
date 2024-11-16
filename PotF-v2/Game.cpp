@@ -26,9 +26,9 @@ void Game::processEvents() {
             mWindow.close();
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-        mVelocity.x = -0.1f; // adjust this value to control the left movement speed
+        mVelocity.x = -0.05f; // adjust this value to control the left movement speed
     } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-        mVelocity.x = 0.1f; // adjust this value to control the right movement speed
+        mVelocity.x = 0.05f; // adjust this value to control the right movement speed
     } else {
         mVelocity.x = 0.f;
     }
