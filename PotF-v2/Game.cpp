@@ -18,8 +18,8 @@ Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style
     mJumpStamina = 100.f; // initial jump stamina
     mStaminaRecoveryRate = 0.01f; // rate at which stamina recovers
     mStaminaConsumptionRate = 20.f; // stamina consumed per jump
-    mWalkSpeed = 0.05f; // walking speed
-    mSprintSpeed = 0.1f; // sprinting speed
+    mWalkSpeed = 0.085f; // walking speed
+    mSprintSpeed = 0.18f; // sprinting speed
 
     // stamina bar
     mStaminaBar.setSize(sf::Vector2f(200.f, 15.f)); // 3/4 of the original height (20.f)
@@ -38,12 +38,12 @@ void Game::run() { while (mWindow.isOpen()) { processEvents(); update(); render(
 void Game::processEvents() {
     sf::Event event;
     while (mWindow.pollEvent(event)) {
-        if (event.type == sf::Event::Closed) 
-            mWindow.close();  
+        if (event.type == sf::Event::Closed)
+            mWindow.close();
     }
     bool isSprinting = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && mJumpStamina > 0;
     float currentSpeed = isSprinting ? mSprintSpeed : mWalkSpeed;
-    
+
     if (isSprinting) {
         mJumpStamina -= mStaminaConsumptionRate * 0.001f; // consume stamina while sprinting
         if (mJumpStamina < 0) mJumpStamina = 0; // prevent stamina from going negative
@@ -58,12 +58,18 @@ void Game::processEvents() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
         mVelocity.x = -currentSpeed; // adjust this value to control the left movement speed
         mSprite.setTexture(mTextureRun);
+        mSprite.setScale(-1.f, 1.f); // flip the sprite horizontally
+        mSprite.setOrigin(mSprite.getGlobalBounds().width, 0); // adjust the origin to the right side
         isMoving = true;
-    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
         mVelocity.x = currentSpeed; // adjust this value to control the right movement speed
         mSprite.setTexture(mTextureRun);
+        mSprite.setScale(1.f, 1.f); // reset the sprite to normal
+        mSprite.setOrigin(0, 0); // reset the origin to the left side
         isMoving = true;
-    } else {
+    }
+    else {
         mVelocity.x = 0.f; // stop moving
     }
 
@@ -72,12 +78,13 @@ void Game::processEvents() {
     }
 
     if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) && !mIsJumping && mJumpStamina >= mStaminaConsumptionRate) {
-        mVelocity.y = mJumpSpeed; 
-        mIsJumping = true; 
+        mVelocity.y = mJumpSpeed;
+        mIsJumping = true;
         mJumpStamina -= mStaminaConsumptionRate; // consume stamina when jumping
         mSprite.setTexture(mTextureJump);
     }
 }
+
 
 void Game::update() {
     mVelocity.y += mGravity;
