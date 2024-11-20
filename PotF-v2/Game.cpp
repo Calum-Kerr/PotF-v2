@@ -7,8 +7,6 @@ Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style
         !mTextureJump.loadFromFile("player_jump_left_48x48-sheet_1.png")) {
 
     }
-    if (!mTileMap.load("Basic Tilemap.png")) {}
-    mTileMap.setPosition(0.f, mWindow.getSize().y - 160.f); // adjust Y position
 
     // player's initial position to stand on the floor
     mSprite.setPosition(mWindow.getSize().x / 2.f, mWindow.getSize().y - mSprite.getGlobalBounds().height - 160.f);
@@ -139,7 +137,6 @@ void Game::update() {
 
 void Game::render() {
     mWindow.clear();
-    mTileMap.draw(mWindow);
     mWindow.draw(mSprite);
     mWindow.draw(mStaminaBar);
     mWindow.display();
