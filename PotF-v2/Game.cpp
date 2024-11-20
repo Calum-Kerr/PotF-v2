@@ -57,14 +57,18 @@ void Game::processEvents() {
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
         mVelocity.x = -currentSpeed; // adjust this value to control the left movement speed
-        mSprite.setTexture(mTextureRun);
+        if (!mIsJumping) {
+            mSprite.setTexture(mTextureRun);
+        }
         mSprite.setScale(-1.f, 1.f); // flip the sprite horizontally
         mSprite.setOrigin(mSprite.getGlobalBounds().width, 0); // adjust the origin to the right side
         isMoving = true;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
         mVelocity.x = currentSpeed; // adjust this value to control the right movement speed
-        mSprite.setTexture(mTextureRun);
+        if (!mIsJumping) {
+            mSprite.setTexture(mTextureRun);
+        }
         mSprite.setScale(1.f, 1.f); // reset the sprite to normal
         mSprite.setOrigin(0, 0); // reset the origin to the left side
         isMoving = true;
