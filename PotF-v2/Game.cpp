@@ -5,8 +5,13 @@ Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style
     if (!mTextureIdle.loadFromFile("Player Sword Idle 48x48.png") ||
         !mTextureRun.loadFromFile("Player_Sword_Run_48x48_1.png") ||
         !mTextureJump.loadFromFile("player_jump_left_48x48-sheet_1.png")) {
-        // Handle error
+
     }
+    if (!mTileMap.load("Basic Tilemap.png")) {}
+    mTileMap.setPosition(0.f, mWindow.getSize().y - 160.f); // adjust Y position
+
+    // player's initial position to stand on the floor
+    mSprite.setPosition(mWindow.getSize().x / 2.f, mWindow.getSize().y - mSprite.getGlobalBounds().height - 160.f);
 
     mSprite.setTexture(mTextureIdle);
     mSprite.setPosition(mWindow.getSize().x / 2.f, 0.f);
@@ -93,22 +98,25 @@ void Game::processEvents() {
 void Game::update() {
     mVelocity.y += mGravity;
     mSprite.move(mVelocity);
-    // prevent the ball from falling through the bottom of the window
-    if (mSprite.getPosition().y + mSprite.getGlobalBounds().height > mWindow.getSize().y) {
-        mSprite.setPosition(mSprite.getPosition().x, mWindow.getSize().y - mSprite.getGlobalBounds().height);
+
+    // the floor Y position
+    float floorY = mWindow.getSize().y - 160.f; // offset used for the tile map
+
+    // prevent the player from falling through the floor
+    if (mSprite.getPosition().y + mSprite.getGlobalBounds().height > floorY) {
+        mSprite.setPosition(mSprite.getPosition().x, floorY - mSprite.getGlobalBounds().height);
         mVelocity.y = 0;
         mIsJumping = false;
         if (!sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
             mSprite.setTexture(mTextureIdle);
         }
     }
-    // recover jump stamina over time
+
     if (mJumpStamina < 100.f) {
-        mJumpStamina += mStaminaRecoveryRate; 
+        mJumpStamina += mStaminaRecoveryRate;
     }
 
-    // update stamina bar size
-    mStaminaBar.setSize(sf::Vector2f(200.f * (mJumpStamina / 100.f), 15.f)); // 3/4 of the original height (20.f)
+    mStaminaBar.setSize(sf::Vector2f(200.f * (mJumpStamina / 100.f), 15.f));
 
     // update animation frame
     mElapsedTime += mClock.restart().asSeconds();
@@ -117,17 +125,21 @@ void Game::update() {
         mCurrentFrame++;
         if (mSprite.getTexture() == &mTextureIdle) {
             mCurrentFrame %= 10; // 10 frames for idle
-        } else if (mSprite.getTexture() == &mTextureRun) {
-            mCurrentFrame %= 8; // 9 frames for run
-        } else if (mSprite.getTexture() == &mTextureJump) {
+        }
+        else if (mSprite.getTexture() == &mTextureRun) {
+            mCurrentFrame %= 8; // 8 frames for run
+        }
+        else if (mSprite.getTexture() == &mTextureJump) {
             mCurrentFrame %= 6; // 6 frames for jump
         }
         mSprite.setTextureRect(sf::IntRect(mCurrentFrame * 48, 0, 48, 48));
     }
 }
 
+
 void Game::render() {
     mWindow.clear();
+    mTileMap.draw(mWindow);
     mWindow.draw(mSprite);
     mWindow.draw(mStaminaBar);
     mWindow.display();

@@ -3,6 +3,7 @@
 #define GAME_H
 
 #include <SFML/Graphics.hpp>
+#include "TileMap.h" // Include the TileMap header file
 
 class Game {
 public:
@@ -32,6 +33,7 @@ private:
     float mFrameTime;
     float mElapsedTime;
     sf::Clock mClock;
+    TileMap mTileMap;
 };
 
 #endif // GAME_H
