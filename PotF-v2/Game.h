@@ -3,17 +3,28 @@
 #define GAME_H
 
 #include <SFML/Graphics.hpp>
+#include "Enemy.h"
+#include <vector>
 
 class Game {
 public:
     Game();
     void run();
+
 private:
     void processEvents();
     void update();
     void render();
+    void respawnPlayer();
+
     sf::RenderWindow mWindow;
     sf::CircleShape mShape;
+    sf::Texture mTextureIdle;
+    sf::Texture mTextureRun;
+    sf::Texture mTextureJump;
+    sf::Texture mTextureDeath;
+    sf::Texture mTextureAttack;
+    sf::Sprite mSprite;
     sf::Vector2f mVelocity;
     float mGravity;
     float mJumpSpeed;
@@ -21,17 +32,19 @@ private:
     float mJumpStamina;
     float mStaminaRecoveryRate;
     float mStaminaConsumptionRate;
-    sf::RectangleShape mStaminaBar;
     float mWalkSpeed;
     float mSprintSpeed;
-    sf::Texture mTextureIdle;
-    sf::Texture mTextureRun;
-    sf::Texture mTextureJump;
-    sf::Sprite mSprite;
-    int mCurrentFrame; // Changed from float to int
+    sf::RectangleShape mStaminaBar;
+    sf::RectangleShape mHealthBar;
+    int mCurrentFrame;
     float mFrameTime;
     float mElapsedTime;
     sf::Clock mClock;
+
+    int mPlayerHealth;
+    bool mIsAttacking;
+    bool mIsDead;
+    std::vector<Enemy> mEnemies;
 };
 
 #endif // GAME_H

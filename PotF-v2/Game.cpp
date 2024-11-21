@@ -1,11 +1,14 @@
 #include "Game.h"
+#include "Enemy.h"
+#include <vector>
+#include <cmath>
 
 Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen), mShape(24.f) {
-    // Load textures
     if (!mTextureIdle.loadFromFile("Player Sword Idle 48x48.png") ||
         !mTextureRun.loadFromFile("Player_Sword_Run_48x48_1.png") ||
-        !mTextureJump.loadFromFile("player_jump_left_48x48-sheet_1.png")) {
-
+        !mTextureJump.loadFromFile("player_jump_left_48x48-sheet_1.png") ||
+        !mTextureDeath.loadFromFile("Player Death 64x64.png") ||
+        !mTextureAttack.loadFromFile("player sword atk 64x64.png")) {
     }
 
     // player's initial position to stand on the floor
@@ -29,14 +32,30 @@ Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style
     mStaminaBar.setFillColor(sf::Color::Red);
     mStaminaBar.setPosition(10.f, 10.f);
 
+    // health bar
+    mHealthBar.setSize(sf::Vector2f(200.f, 15.f));
+    mHealthBar.setFillColor(sf::Color::Green);
+    mHealthBar.setPosition(mSprite.getPosition().x, mSprite.getPosition().y - 20.f);
+
     // initialize animation frames
     mCurrentFrame = 0;
     mFrameTime = 0.1f; // time per frame
     mElapsedTime = 0.f;
     mClock.restart(); // initialize the clock
+
+    // player health
+    mPlayerHealth = 100;
+    mIsAttacking = false;
+    mIsDead = false;
 }
 
-void Game::run() { while (mWindow.isOpen()) { processEvents(); update(); render(); } }
+void Game::run() {
+    while (mWindow.isOpen()) {
+        processEvents();
+        update();
+        render();
+    }
+}
 
 void Game::processEvents() {
     sf::Event event;
@@ -90,8 +109,14 @@ void Game::processEvents() {
         mJumpStamina -= mStaminaConsumptionRate; // consume stamina when jumping
         mSprite.setTexture(mTextureJump);
     }
-}
 
+    // player attack
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
+        mIsAttacking = true;
+        mCurrentFrame = 0;
+        mSprite.setTexture(mTextureAttack);
+    }
+}
 
 void Game::update() {
     mVelocity.y += mGravity;
@@ -121,23 +146,82 @@ void Game::update() {
     if (mElapsedTime >= mFrameTime) {
         mElapsedTime = 0.f;
         mCurrentFrame++;
-        if (mSprite.getTexture() == &mTextureIdle) {
-            mCurrentFrame %= 10; // 10 frames for idle
+        if (mIsAttacking) {
+            if (mCurrentFrame >= 6) {
+                mIsAttacking = false;
+                mSprite.setTexture(mTextureIdle);
+            }
+            else {
+                mSprite.setTextureRect(sf::IntRect(mCurrentFrame * 64, 0, 64, 64));
+            }
         }
-        else if (mSprite.getTexture() == &mTextureRun) {
-            mCurrentFrame %= 8; // 8 frames for run
+        else if (mIsDead) {
+            if (mCurrentFrame >= 10) {
+                mIsDead = false;
+                respawnPlayer();
+            }
+            else {
+                mSprite.setTextureRect(sf::IntRect(mCurrentFrame * 64, 0, 64, 64));
+            }
         }
-        else if (mSprite.getTexture() == &mTextureJump) {
-            mCurrentFrame %= 6; // 6 frames for jump
+        else {
+            if (mSprite.getTexture() == &mTextureIdle) {
+                mCurrentFrame %= 10; // 10 frames for idle
+            }
+            else if (mSprite.getTexture() == &mTextureRun) {
+                mCurrentFrame %= 8; // 8 frames for run
+            }
+            else if (mSprite.getTexture() == &mTextureJump) {
+                mCurrentFrame %= 6; // 6 frames for jump
+            }
+            mSprite.setTextureRect(sf::IntRect(mCurrentFrame * 48, 0, 48, 48));
         }
-        mSprite.setTextureRect(sf::IntRect(mCurrentFrame * 48, 0, 48, 48));
+    }
+
+    // health bar position
+    mHealthBar.setPosition(mSprite.getPosition().x, mSprite.getPosition().y - 20.f);
+    mHealthBar.setSize(sf::Vector2f(200.f * (mPlayerHealth / 100.f), 15.f));
+
+    // spawn enemies
+    if (mEnemies.size() < 10) {
+        float spawnX = static_cast<float>(rand() % mWindow.getSize().x);
+        float spawnY = static_cast<float>(rand() % 2 == 0 ? -32.f : mWindow.getSize().y + 32.f); // Spawn above or below the window
+        mEnemies.emplace_back(sf::Vector2f(spawnX, spawnY), mWalkSpeed); // Use player's walking speed
+    }
+
+    // update enemies
+    for (auto& enemy : mEnemies) {
+        enemy.setPlayerPosition(mSprite.getPosition());
+        enemy.update(mElapsedTime);
+        if (enemy.getBounds().intersects(mSprite.getGlobalBounds())) {
+            mPlayerHealth -= 10;
+            if (mPlayerHealth <= 0 && !mIsDead) {
+                mIsDead = true;
+                mCurrentFrame = 0;
+                mSprite.setTexture(mTextureDeath);
+            }
+        }
     }
 }
-
 
 void Game::render() {
     mWindow.clear();
     mWindow.draw(mSprite);
     mWindow.draw(mStaminaBar);
+    mWindow.draw(mHealthBar);
+
+    // render enemies
+    for (auto& enemy : mEnemies) {
+        enemy.render(mWindow);
+    }
+
     mWindow.display();
+}
+
+void Game::respawnPlayer() {
+    mPlayerHealth = 100;
+    mSprite.setPosition(mWindow.getSize().x / 2.f, 0.f);
+    mVelocity = sf::Vector2f(0.f, 0.f);
+    mIsJumping = false;
+    mSprite.setTexture(mTextureIdle);
 }
