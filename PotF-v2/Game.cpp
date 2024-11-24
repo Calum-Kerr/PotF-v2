@@ -68,7 +68,7 @@ void Game::processEvents() {
             mWindow.close();
     }
 
-    if (mIsAttacking) { return; }// prevent any other actions while attacking
+    if (mIsDead || mIsAttacking) { return; } // prevent any other actions while dead or attacking
 
     bool isSprinting = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && mJumpStamina > 0;
     float currentSpeed = isSprinting ? mSprintSpeed : mWalkSpeed;
@@ -127,27 +127,29 @@ void Game::processEvents() {
 }
 
 void Game::update() {
-    mVelocity.y += mGravity;
-    mSprite.move(mVelocity);
+    if (!mIsDead) {
+        mVelocity.y += mGravity;
+        mSprite.move(mVelocity);
 
-    // the floor Y position
-    float floorY = mWindow.getSize().y - 160.f; // offset used for the tile map
+        // the floor Y position
+        float floorY = mWindow.getSize().y - 160.f; // offset used for the tile map
 
-    // prevent the player from falling through the floor
-    if (mSprite.getPosition().y + mSprite.getGlobalBounds().height > floorY) {
-        mSprite.setPosition(mSprite.getPosition().x, floorY - mSprite.getGlobalBounds().height);
-        mVelocity.y = 0;
-        mIsJumping = false;
-        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !mIsAttacking) {
-            mSprite.setTexture(mTextureIdle);
+        // prevent the player from falling through the floor
+        if (mSprite.getPosition().y + mSprite.getGlobalBounds().height > floorY) {
+            mSprite.setPosition(mSprite.getPosition().x, floorY - mSprite.getGlobalBounds().height);
+            mVelocity.y = 0;
+            mIsJumping = false;
+            if (!sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !mIsAttacking) {
+                mSprite.setTexture(mTextureIdle);
+            }
         }
-    }
 
-    if (mJumpStamina < 100.f) {
-        mJumpStamina += mStaminaRecoveryRate;
-    }
+        if (mJumpStamina < 100.f) {
+            mJumpStamina += mStaminaRecoveryRate;
+        }
 
-    mStaminaBar.setSize(sf::Vector2f(200.f * (mJumpStamina / 100.f), 15.f));
+        mStaminaBar.setSize(sf::Vector2f(200.f * (mJumpStamina / 100.f), 15.f));
+    }
 
     // update animation frame
     mElapsedTime += mClock.restart().asSeconds();
