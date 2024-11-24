@@ -39,7 +39,7 @@ Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style
     // health bar
     mHealthBar.setSize(sf::Vector2f(200.f, 15.f));
     mHealthBar.setFillColor(sf::Color::Green);
-    mHealthBar.setPosition(mSprite.getPosition().x, mSprite.getPosition().y - 20.f);
+    mHealthBar.setPosition(10.f, 30.f); // position under the stamina bar
 
     // initialize animation frames
     mCurrentFrame = 0;
@@ -67,6 +67,9 @@ void Game::processEvents() {
         if (event.type == sf::Event::Closed)
             mWindow.close();
     }
+
+    if (mIsAttacking) { return; }// prevent any other actions while attacking
+
     bool isSprinting = sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && mJumpStamina > 0;
     float currentSpeed = isSprinting ? mSprintSpeed : mWalkSpeed;
 
@@ -119,6 +122,7 @@ void Game::processEvents() {
         mIsAttacking = true;
         mCurrentFrame = 0;
         mSprite.setTexture(mTextureAttack);
+        mVelocity.x = 0; // stop horizontal movement during attack
     }
 }
 
@@ -134,7 +138,7 @@ void Game::update() {
         mSprite.setPosition(mSprite.getPosition().x, floorY - mSprite.getGlobalBounds().height);
         mVelocity.y = 0;
         mIsJumping = false;
-        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::A) && !sf::Keyboard::isKeyPressed(sf::Keyboard::D) && !mIsAttacking) {
             mSprite.setTexture(mTextureIdle);
         }
     }
@@ -156,7 +160,7 @@ void Game::update() {
                 mSprite.setTexture(mTextureIdle);
             }
             else {
-                mSprite.setTextureRect(sf::IntRect(mCurrentFrame * 64, 0, 64, 64));
+                mSprite.setTextureRect(sf::IntRect(mCurrentFrame * 64, 0, 64, 64)); // Adjusted for attack frame size
             }
         }
         else if (mIsDead) {
@@ -165,7 +169,7 @@ void Game::update() {
                 respawnPlayer();
             }
             else {
-                mSprite.setTextureRect(sf::IntRect(mCurrentFrame * 64, 0, 64, 64));
+                mSprite.setTextureRect(sf::IntRect(mCurrentFrame * 64, 0, 64, 64)); // Adjusted for death frame size
             }
         }
         else {
@@ -183,14 +187,13 @@ void Game::update() {
     }
 
     // health bar position
-    mHealthBar.setPosition(mSprite.getPosition().x, mSprite.getPosition().y - 20.f);
     mHealthBar.setSize(sf::Vector2f(200.f * (mPlayerHealth / 100.f), 15.f));
 
     // spawn enemies
     if (mEnemies.size() < 10) {
         float spawnX = static_cast<float>(rand() % mWindow.getSize().x);
-        float spawnY = static_cast<float>(rand() % 2 == 0 ? -32.f : mWindow.getSize().y + 32.f); // Spawn above or below the window
-        mEnemies.emplace_back(sf::Vector2f(spawnX, spawnY), mWalkSpeed); // Use player's walking speed
+        float spawnY = mWindow.getSize().y - 160.f - mSprite.getGlobalBounds().height; // spawn at the same Y level as the player
+        mEnemies.emplace_back(sf::Vector2f(spawnX, spawnY), mWalkSpeed); // use player's walking speed
     }
 
     // update enemies
