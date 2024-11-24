@@ -15,13 +15,15 @@ public:
     void setPlayerPosition(const sf::Vector2f& position);
     bool canAttack() const;
     void resetAttackTimer();
+    void takeDamage();
 
 private:
     sf::CircleShape mShape;
     float mSpeed;
     sf::Vector2f mPlayerPosition;
     float mAttackCooldown;
-    float mElapsedTimeSinceLastAttack; 
+    float mElapsedTimeSinceLastAttack;
+    float mDamageIndicatorTime;
 };
 
 #endif // ENEMY_H

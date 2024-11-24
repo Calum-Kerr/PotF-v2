@@ -213,6 +213,11 @@ void Game::update() {
                 mSprite.setTexture(mTextureDeath);
             }
         }
+
+        // check if the player is attacking and intersects with the enemy
+        if (mIsAttacking && enemy.getBounds().intersects(mSprite.getGlobalBounds())) {
+            enemy.takeDamage(); // call takeDamage method
+        }
     }
 }
 
