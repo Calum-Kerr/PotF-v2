@@ -15,7 +15,8 @@ public:
     void setPlayerPosition(const sf::Vector2f& position);
     bool canAttack() const;
     void resetAttackTimer();
-    void takeDamage();
+    void takeDamage(float damage);
+    float getHealth() const;
 
 private:
     sf::CircleShape mShape;
@@ -24,6 +25,7 @@ private:
     float mAttackCooldown;
     float mElapsedTimeSinceLastAttack;
     float mDamageIndicatorTime;
+    float mHealth; 
 };
 
 #endif // ENEMY_H

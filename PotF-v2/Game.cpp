@@ -48,7 +48,7 @@ Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style
     mClock.restart(); // initialize the clock
 
     // player health
-    mPlayerHealth = 100;
+    mPlayerHealth = 450;
     mIsAttacking = false;
     mIsDead = false;
 }
@@ -216,8 +216,11 @@ void Game::update() {
 
         // check if the player is attacking and intersects with the enemy
         if (mIsAttacking && enemy.getBounds().intersects(mSprite.getGlobalBounds())) {
-            enemy.takeDamage(); // call takeDamage method
+            enemy.takeDamage(20.f); // increase player damage
         }
+
+        mEnemies.erase(std::remove_if(mEnemies.begin(), mEnemies.end(), [](const Enemy& enemy) {
+            return enemy.getHealth() <= 0;}), mEnemies.end());
     }
 }
 

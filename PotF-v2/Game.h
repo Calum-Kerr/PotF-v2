@@ -5,8 +5,12 @@
 #include "Enemy.h"
 #include <vector>
 
-class Game { public: Game(); void run();
-private: void processEvents();
+class Game {
+public:
+    Game();
+    void run();
+private:
+    void processEvents();
     void update();
     void render();
     void respawnPlayer();
@@ -39,12 +43,33 @@ private: void processEvents();
     bool mIsAttacking;
     bool mIsDead;
     std::vector<Enemy> mEnemies;
-	float mEnemySpawnTimer;
-	float mEnemySpawnTimerMax;
-	float mEnemyMaxVelocity;
-	float mEnemyMinVelocity;
-	float mEnemyVelocity;
-	float mEnemySpawnTimerIncrease;
+    float mEnemySpawnTimer;
+    float mEnemySpawnTimerMax;
+    float mEnemyMaxVelocity;
+    float mEnemyMinVelocity;
+    float mEnemyVelocity;
+    float mEnemySpawnTimerIncrease;
     float mEnemyVelocityIncrease;
+    float mEnemySpawnTimerIncreaseAmount;
+    float mEnemyVelocityIncreaseAmount;
+    float mEnemyDamage;
+    float mEnemyHealth;
+    float mEnemyHealthMax;
+    float mEnemyDamageIndicatorTime;
+    float mEnemyElapsedTimeSinceLastAttack;
+    float mEnemyAttackCooldown;
+    float mEnemyAttackCooldownMax;
+    float mEnemyAttackCooldownIncrease;
+    float mEnemyAttackCooldownIncreaseAmount;
+    float mEnemyDamageIndicatorTimeIncrease;
+    float mEnemyDamageIndicatorTimeIncreaseAmount;
+    float mEnemyHealthIncrease;
+    float mEnemyHealthIncreaseAmount;
+    float mEnemyHealthMaxIncrease; 
+    float mEnemyDamageIncrease;
+    float mEnemyDamageIncreaseAmount;
+    float mEnemyDamageMax;
+    float mEnemyDamageMaxIncrease;
+    float mEnemyDamageMaxIncreaseAmount;
 };
 #endif // GAME_H

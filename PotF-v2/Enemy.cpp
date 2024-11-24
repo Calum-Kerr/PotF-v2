@@ -1,7 +1,8 @@
 #include "Enemy.h"
 #include <cmath>
 
-Enemy::Enemy(const sf::Vector2f& position, float speed): mSpeed(speed), mAttackCooldown(2.f), mElapsedTimeSinceLastAttack(0.f), mDamageIndicatorTime(0.f) {
+Enemy::Enemy(const sf::Vector2f& position, float speed)
+    : mSpeed(speed), mAttackCooldown(2.f), mElapsedTimeSinceLastAttack(0.f), mDamageIndicatorTime(0.f), mHealth(100.f) { // Initialize mHealth
     mShape.setRadius(16.f); // 32x32 pixels
     mShape.setFillColor(sf::Color::Green);
     mShape.setPosition(position);
@@ -28,6 +29,13 @@ void Enemy::update(float deltaTime) {
 
 void Enemy::render(sf::RenderWindow& window) {
     window.draw(mShape);
+
+    // render health bar above the enemy
+    sf::RectangleShape healthBar;
+    healthBar.setSize(sf::Vector2f(32.f * (mHealth / 100.f), 5.f)); // health bar width is proportional to health
+    healthBar.setFillColor(sf::Color::Red);
+    healthBar.setPosition(mShape.getPosition().x, mShape.getPosition().y - 10.f); // position above the enemy
+    window.draw(healthBar);
 }
 
 sf::FloatRect Enemy::getBounds() const {
@@ -46,7 +54,11 @@ void Enemy::resetAttackTimer() {
     mElapsedTimeSinceLastAttack = 0.f;
 }
 
-void Enemy::takeDamage() {
-    mShape.setFillColor(sf::Color::Red); // change color to red
-    mDamageIndicatorTime = 0.5f; // set the duration for the damage indicator
+void Enemy::takeDamage(float damage) {
+    mHealth -= damage; // reduce health by damage amount
+    if (mHealth > 0) { mShape.setFillColor(sf::Color::Red);mDamageIndicatorTime = 0.5f; }
+}
+
+float Enemy::getHealth() const {
+    return mHealth;
 }
