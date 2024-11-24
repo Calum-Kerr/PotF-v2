@@ -38,5 +38,13 @@ private: void processEvents();
     int mPlayerHealth;
     bool mIsAttacking;
     bool mIsDead;
-    std::vector<Enemy> mEnemies;};
+    std::vector<Enemy> mEnemies;
+	float mEnemySpawnTimer;
+	float mEnemySpawnTimerMax;
+	float mEnemyMaxVelocity;
+	float mEnemyMinVelocity;
+	float mEnemyVelocity;
+	float mEnemySpawnTimerIncrease;
+    float mEnemyVelocityIncrease;
+};
 #endif // GAME_H

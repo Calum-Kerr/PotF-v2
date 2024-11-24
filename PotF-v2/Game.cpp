@@ -201,7 +201,10 @@ void Game::update() {
         enemy.setPlayerPosition(mSprite.getPosition());
         enemy.update(mElapsedTime);
         if (enemy.getBounds().intersects(mSprite.getGlobalBounds())) {
-            mPlayerHealth -= 10;
+            if (enemy.canAttack()) {
+                mPlayerHealth -= 0.08; // deal 8 damage to the player
+                enemy.resetAttackTimer(); // reset the attack timer
+            }
             if (mPlayerHealth <= 0 && !mIsDead) {
                 mIsDead = true;
                 mCurrentFrame = 0;
