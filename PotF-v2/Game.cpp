@@ -2,8 +2,12 @@
 #include "Enemy.h"
 #include <vector>
 #include <cmath>
+#include "MainMenu.h"
 
 Game::Game() : mWindow(sf::VideoMode::getDesktopMode(), "SFML works!", sf::Style::Fullscreen), mShape(24.f) {
+    MainMenu mainMenu(mWindow);
+    mainMenu.run();
+
     if (!mTextureIdle.loadFromFile("Player Sword Idle 48x48.png") ||
         !mTextureRun.loadFromFile("Player_Sword_Run_48x48_1.png") ||
         !mTextureJump.loadFromFile("player_jump_left_48x48-sheet_1.png") ||

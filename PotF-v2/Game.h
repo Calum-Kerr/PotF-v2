@@ -1,18 +1,12 @@
 #pragma once
 #ifndef GAME_H
 #define GAME_H
-
 #include <SFML/Graphics.hpp>
 #include "Enemy.h"
 #include <vector>
 
-class Game {
-public:
-    Game();
-    void run();
-
-private:
-    void processEvents();
+class Game { public: Game(); void run();
+private: void processEvents();
     void update();
     void render();
     void respawnPlayer();
@@ -44,7 +38,5 @@ private:
     int mPlayerHealth;
     bool mIsAttacking;
     bool mIsDead;
-    std::vector<Enemy> mEnemies;
-};
-
+    std::vector<Enemy> mEnemies;};
 #endif // GAME_H
